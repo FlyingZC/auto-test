@@ -49,7 +49,7 @@ jobs:
         run: sleep 15
 
       - name: Show Proxy Status
-          run: mysql -h127.0.0.1 -P3307 -proot -uroot -e "SELECT version()"
+        run: mysql -h127.0.0.1 -P3307 -proot -uroot -e "SELECT version()"
 
       - name: Check out Git repository
         uses: actions/checkout@v2
