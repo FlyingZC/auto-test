@@ -5,8 +5,8 @@ rules:
       - sharding@:sharding
     provider:
       type: ALL_PRIVILEGES_PERMITTED
-  - !TRANSACTION
-    defaultType: XA
+#  - !TRANSACTION
+#    defaultType: XA
 #    providerType: Narayana
 #    providerType: Atomikos
 
