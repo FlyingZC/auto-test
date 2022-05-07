@@ -31,13 +31,15 @@ jobs:
       - name: Waiting for Container
         run: sleep 15
 
-      ## the following code is for checking the MySQL instance
-#      - name: Create DB structure
-#        run: |
-#          sudo /lib/systemd/systemd-sysv-install enable mysql
-#          sudo systemctl enable mysql.service
-#          sudo systemctl start mysql.service
-#          sudo systemctl status mysql.service
+      # the following code is for checking the MySQL instance
+      - name: Create DB structure
+        run: |
+          sudo /lib/systemd/systemd-sysv-install enable mysql
+          sudo systemctl enable mysql.service
+          sudo systemctl start mysql.service
+          sudo systemctl status mysql.service
+          mysql -h127.0.0.1 -P13306 -p12345678 -uroot -e "create database test;"
+          mysql -h127.0.0.1 -P13307 -p12345678 -uroot -e "create database test;"
 
       - name: Setup Proxy
 #        run: sudo docker run --network=proxy-test-network --network-alias shardingsphere-proxy --name shardingsphere-proxy -d -v ${GITHUB_WORKSPACE}/.github/conf:/opt/shardingsphere-proxy/conf -e PORT=3307 -p3307:3307 ghcr.io/apache/shardingsphere-proxy:latest
@@ -45,6 +47,9 @@ jobs:
 
       - name: Waiting for Container
         run: sleep 15
+
+      - name: Show Proxy Status
+          run: mysql -h127.0.0.1 -P3307 -proot -uroot -e "SELECT version()"
 
       - name: Check out Git repository
         uses: actions/checkout@v2
