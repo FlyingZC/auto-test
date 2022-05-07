@@ -38,8 +38,10 @@ jobs:
           sudo systemctl enable mysql.service
           sudo systemctl start mysql.service
           sudo systemctl status mysql.service
-          mysql -h127.0.0.1 -P13306 -p12345678 -uroot -e "create database test;"
-          mysql -h127.0.0.1 -P13307 -p12345678 -uroot -e "create database test;"
+          mysql -hmysql-n-1 -P13306 -p12345678 -uroot -e "create database test;"
+          mysql -hmysql-n-1 -P13306 -p12345678 -uroot -e "show databases;"
+          mysql -hmysql-n-2 -P13307 -p12345678 -uroot -e "create database test;"
+          mysql -hmysql-n-2 -P13307 -p12345678 -uroot -e "show databases;"
 
       - name: Setup Proxy
 #        run: sudo docker run --network=proxy-test-network --network-alias shardingsphere-proxy --name shardingsphere-proxy -d -v ${GITHUB_WORKSPACE}/.github/conf:/opt/shardingsphere-proxy/conf -e PORT=3307 -p3307:3307 ghcr.io/apache/shardingsphere-proxy:latest
