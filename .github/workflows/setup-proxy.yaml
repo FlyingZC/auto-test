@@ -54,5 +54,5 @@ jobs:
           unzip target/auto-test-1.0-SNAPSHOT-full.zip
       - name: Run test
         run: |
-          ./auto-test-1.0-SNAPSHOT/bin/auto-test.sh -h 127.0.0.1 -P 3307 -d sharding_db -u root -p root -f transaction -c SetReadOnly,AutoCommit
+          ./auto-test-1.0-SNAPSHOT/bin/auto-test.sh -h 127.0.0.1 -P 3307 -d sharding_db -u root -p root -f transaction -c SetReadOnly
           cat ${GITHUB_WORKSPACE}/auto-test-1.0-SNAPSHOT/logs/stdout.log
