@@ -3,7 +3,7 @@ name: setup-proxy-docker
 on:
   push:
     branches:
-      - main
+      - add-workflow
 
 jobs:
   setup-mysql-environment:
