@@ -48,7 +48,7 @@ jobs:
 
         run: |
           pwd
-          sudo docker run --network=proxy-test-network --network-alias shardingsphere-proxy --name shardingsphere-proxy -d -v ./.github/conf:/opt/shardingsphere-proxy/conf -v ./.github/ext-lib:/opt/shardingsphere-proxy/ext-lib -e PORT=3307 -p3307:3307 ghcr.io/apache/shardingsphere-proxy:latest
+          sudo docker run --network=proxy-test-network --network-alias shardingsphere-proxy --name shardingsphere-proxy -d -v /home/runner/work/auto-test/auto-test/.github/conf:/opt/shardingsphere-proxy/conf -v /home/runner/work/auto-test/auto-test/.github/ext-lib:/opt/shardingsphere-proxy/ext-lib -e PORT=3307 -p3307:3307 ghcr.io/apache/shardingsphere-proxy:latest
 
 
       - name: Waiting for Container
