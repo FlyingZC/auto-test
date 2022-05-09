@@ -48,6 +48,7 @@ jobs:
 
         run: |
           sudo docker run --network=proxy-test-network --network-alias shardingsphere-proxy --name shardingsphere-proxy -d -v ${GITHUB_WORKSPACE}/src/main/resources/conf/case/transaction/proxy/readonly/mysql:/opt/shardingsphere-proxy/conf -v ${GITHUB_WORKSPACE}/.github/ext-lib:/opt/shardingsphere-proxy/ext-lib -e PORT=3307 -p3307:3307 ghcr.io/apache/shardingsphere-proxy:latest
+          sudo docker logs shardingsphere-proxy
 
       - name: Waiting for Container
         run: sleep 60
