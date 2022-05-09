@@ -53,8 +53,9 @@ jobs:
       - name: Waiting for Container
         run: |
           sleep 60
-          sudo docker exec -it shardingsphere-proxy bash -c 'cat /opt/shardingsphere-proxy/conf/server.yaml'
-          sudo docker exec -it shardingsphere-proxy bash -c 'cat /opt/shardingsphere-proxy/conf/config-sharding.yaml'
+          sudo docker logs shardingsphere-proxy
+#          sudo docker exec -it shardingsphere-proxy bash -c 'cat /opt/shardingsphere-proxy/conf/server.yaml'
+#          sudo docker exec -it shardingsphere-proxy bash -c 'cat /opt/shardingsphere-proxy/conf/config-sharding.yaml'
 
       - name: Show Proxy Status
         run: mysql -h127.0.0.1 -P3307 -proot -uroot -e "SELECT version()"
