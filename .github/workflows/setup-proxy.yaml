@@ -54,7 +54,7 @@ jobs:
       - name: Waiting for Container
         run: |
           sleep 60
-          sudo docker logs shardingsphere-proxy
+#          sudo docker logs shardingsphere-proxy
           sudo docker exec -it shardingsphere-proxy bash -c 'cat /opt/shardingsphere-proxy/conf/server.yaml'
           sudo docker exec -it shardingsphere-proxy bash -c 'cat /opt/shardingsphere-proxy/conf/config-sharding.yaml'
 
