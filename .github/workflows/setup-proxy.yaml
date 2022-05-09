@@ -48,7 +48,7 @@ jobs:
         run: sudo docker run --network=proxy-test-network --network-alias shardingsphere-proxy --name shardingsphere-proxy -d -v ${GITHUB_WORKSPACE}/conf/case/transaction/proxy/readonly/mysql -e PORT=3307 -p3307:3307 ghcr.io/apache/shardingsphere-proxy:latest
 
       - name: Waiting for Container
-        run: sleep 15
+        run: sleep 60
 
       - name: Show Proxy Status
         run: mysql -h127.0.0.1 -P3307 -proot -uroot -e "SELECT version()"
