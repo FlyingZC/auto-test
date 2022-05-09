@@ -50,11 +50,9 @@ jobs:
           pwd
           sudo docker run --network=proxy-test-network --network-alias shardingsphere-proxy --name shardingsphere-proxy -d -v /home/runner/work/auto-test/auto-test/.github/conf:/opt/shardingsphere-proxy/conf -v /home/runner/work/auto-test/auto-test/.github/ext-lib:/opt/shardingsphere-proxy/ext-lib -e PORT=3307 -p3307:3307 ghcr.io/apache/shardingsphere-proxy:latest
 
-
       - name: Waiting for Container
         run: |
           sleep 60
-#          sudo docker logs shardingsphere-proxy
           sudo docker exec -it shardingsphere-proxy bash -c 'cat /opt/shardingsphere-proxy/conf/server.yaml'
           sudo docker exec -it shardingsphere-proxy bash -c 'cat /opt/shardingsphere-proxy/conf/config-sharding.yaml'
 
