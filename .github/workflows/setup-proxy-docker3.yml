@@ -1,0 +1,73 @@
+name: setup-proxy-docker3
+
+on:
+  push:
+    branches:
+      - add-workflow
+
+jobs:
+  setup-mysql-environment:
+    name: setup-proxy-environment
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+#      - name: Cache Maven Repos
+#          uses: actions/cache@v2
+#          with:
+#            path: ~/.m2/repository
+#            key: shardingsphere-it-cache-${{ github.sha }}
+#            restore-keys: |
+#              ${{ runner.os }}-maven-
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: 8
+      - name: Setup MySQL
+        run: |
+          sudo docker network create proxy-test-network
+          sudo docker run --name mysql1 --network=proxy-test-network --network-alias mysql-n-1 -itd -e MYSQL_ROOT_PASSWORD=12345678 -p13306:3306 mysql:8.0.28
+          sudo docker run --name mysql2 --network=proxy-test-network --network-alias mysql-n-2 -itd -e MYSQL_ROOT_PASSWORD=12345678 -p13307:3306 mysql:8.0.28
+      - name: Waiting for Container
+        run: sleep 15
+
+      # the following code is for checking the MySQL instance
+      - name: Create DB structure
+        run: |
+          sudo /lib/systemd/systemd-sysv-install enable mysql
+          sudo systemctl enable mysql.service
+          sudo systemctl start mysql.service
+          sudo systemctl status mysql.service
+          mysql -h127.0.0.1 -P13306 -p12345678 -uroot -e "create database test;"
+          mysql -h127.0.0.1 -P13306 -p12345678 -uroot -e "show databases;"
+          mysql -h127.0.0.1 -P13307 -p12345678 -uroot -e "create database test;"
+          mysql -h127.0.0.1 -P13307 -p12345678 -uroot -e "show databases;"
+
+      - name: Setup Proxy
+#        run: sudo docker run --network=proxy-test-network --network-alias shardingsphere-proxy --name shardingsphere-proxy -d -v ${GITHUB_WORKSPACE}/.github/conf:/opt/shardingsphere-proxy/conf -e PORT=3307 -p3307:3307 ghcr.io/apache/shardingsphere-proxy:latest
+
+        run: |
+          pwd
+          sudo docker run --network=proxy-test-network --network-alias shardingsphere-proxy --name shardingsphere-proxy -d -v ${GITHUB_WORKSPACE}/src/main/resources/conf/case/transaction/proxy/readonly/mysql:/opt/shardingsphere-proxy/conf -e PORT=3307 -p3307:3307 ghcr.io/apache/shardingsphere-proxy:latest
+#          sudo docker run --network=proxy-test-network --network-alias shardingsphere-proxy --name shardingsphere-proxy -d -v /home/runner/work/auto-test/auto-test/.github/conf:/opt/shardingsphere-proxy/conf -v /home/runner/work/auto-test/auto-test/.github/ext-lib:/opt/shardingsphere-proxy/ext-lib -e PORT=3307 -p3307:3307 ghcr.io/apache/shardingsphere-proxy:latest
+
+      - name: Waiting for Container
+        run: |
+          sleep 60
+          sudo docker logs shardingsphere-proxy
+          sudo docker exec -it shardingsphere-proxy bash -c 'ls /opt/shardingsphere-proxy/conf'
+#          sudo docker exec -it shardingsphere-proxy bash -c 'cat /opt/shardingsphere-proxy/conf/config-sharding.yaml'
+
+      - name: Show Proxy Status
+        run: mysql -h127.0.0.1 -P3307 -proot -uroot -e "SELECT version()"
+
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - name: Build package
+        run: |
+          mvn package
+          unzip target/auto-test-1.0-SNAPSHOT-full.zip
+      - name: Run test
+        run: |
+          ./auto-test-1.0-SNAPSHOT/bin/auto-test.sh -h 127.0.0.1 -P 3307 -d sharding_db -u root -p root -f transaction -c SetReadOnly
+          cat ${GITHUB_WORKSPACE}/auto-test-1.0-SNAPSHOT/logs/stdout.log
